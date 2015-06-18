@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type='text/javascript' src='../lib/knockout-3.3.0.js'>
+    </script>
+</head>
+
+<body>
+    <h2>People</h2>
+    <span> New Child Name: </span>
+    <input data-bind="value: itemToAdd" /></input>
+    <ul data-bind="foreach: people">
+        <li>
+            <div>
+                <span data-bind="text: name"> </span> has <span data-bind='text: children().length'>&nbsp;</span> children:
+                <a href='#' data-bind='click: addChild '>Add child</a>
+                <a href='#' data-bind='click: removeLastChild '>Remove last child</a>
+                <span class='renderTime' data-bind='visible: $root.showRenderTimes'>
+                (person rendered at <span data-bind='text: new Date().getSeconds()' > </span>)
+                </span>
+            </div>
+            <ul data-bind="foreach: children">
+                <li>
+                    <span data-bind="text: $data"> </span>
+                    <span class='renderTime' data-bind='visible: $root.showRenderTimes'>
+                    (child rendered at <span data-bind='text: new Date().getSeconds()' > </span>)
+                    </span>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <label>
+        <input data-bind='checked: showRenderTimes' type='checkbox' /> Show render times</label>
+</body>
+<script type='text/javascript'>
+var Person = function(name, children) {
+    this.name = name;
+    this.children = ko.observableArray(children);
+
+
+    this.addChild = function() {
+        if (viewModel.itemToAdd().length > 0) {
+            this.children.push(viewModel.itemToAdd());
+            viewModel.itemToAdd("");
+        }
+    }.bind(this);
+
+    this.removeLastChild = function() {
+        var length = this.children().length;
+        if (length > 0) {
+            this.children.remove(this.children()[length - 1])
+        }
+    }
+
+}
+
+var viewModel = {
+    people: [
+        new Person("Annabelle", ["Arnie", "Anders", "Apple"]),
+        new Person("Bertie", ["Boutros-Boutros", "Brianna", "Barbie", "Bee-bop"]),
+        new Person("Charles", ["Cayenne", "Cleopatra"])
+    ],
+    itemToAdd: ko.observable(""),
+    showRenderTimes: ko.observable(false)
+};
+
+ko.applyBindings(viewModel);
+</script>
+
+</html>
